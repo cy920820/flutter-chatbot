@@ -22,9 +22,19 @@ jobs:
         with:
           flutter-version: 3.24.5
 
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
       - name: Build
         run: |
           flutter pub get
+          flutter create . --platforms=ios
+          cd ios
+          rm -rf Pods Podfile.lock
+          pod install
+          cd ..
           flutter build ios --release --no-codesign
           cd build/ios/iphoneos
           mkdir Payload
