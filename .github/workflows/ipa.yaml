@@ -33,15 +33,9 @@ jobs:
           echo "Current pubspec.yaml content:"
           cat pubspec.yaml
 
-          # 使用 perl 替换项目名称
-          perl -pi -e 's/name: flutter-chatbot/name: flutter_chatbot/' pubspec.yaml
-
-          # 确认修改
-          echo "Modified pubspec.yaml content:"
-          cat pubspec.yaml
-
+          # 项目名称已经是 chatbot，不需要修改
           flutter pub get
-          flutter create . --platforms=ios
+          flutter create . --platforms=ios --project-name chatbot
           cd ios
           rm -rf Pods Podfile.lock
           pod install
