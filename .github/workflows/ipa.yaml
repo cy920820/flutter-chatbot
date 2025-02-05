@@ -93,8 +93,9 @@ jobs:
       - name: ChangeLog
         id: changelog
         run: |
+          CHANGELOG_CONTENT=$(awk '/^[0-9]/{p=NR+3}(NR<=p){print}' CHANGELOG | head -n 4)
           echo "latest<<EOF" >> $GITHUB_OUTPUT
-          awk '/^[0-9]/{i++}i==1' CHANGELOG | sed '${/^$/d}' >> $GITHUB_OUTPUT
+          echo "$CHANGELOG_CONTENT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Release
