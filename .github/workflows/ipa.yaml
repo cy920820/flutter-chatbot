@@ -29,7 +29,16 @@ jobs:
 
       - name: Build
         run: |
-          sed -i '' 's/name: flutter-chatbot/name: flutter_chatbot/' pubspec.yaml
+          # 显示当前 pubspec.yaml 内容
+          echo "Current pubspec.yaml content:"
+          cat pubspec.yaml
+
+          # 使用 perl 替换项目名称
+          perl -pi -e 's/name: flutter-chatbot/name: flutter_chatbot/' pubspec.yaml
+
+          # 确认修改
+          echo "Modified pubspec.yaml content:"
+          cat pubspec.yaml
 
           flutter pub get
           flutter create . --platforms=ios
