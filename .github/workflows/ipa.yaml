@@ -1,0 +1,46 @@
+name: Build iOS IPA
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.24.5
+
+      - name: Build
+        run: |
+          flutter pub get
+          flutter build ios --release --no-codesign
+          cd build/ios/iphoneos
+          mkdir Payload
+          cp -r Runner.app Payload/
+          zip -r app-ios.ipa Payload/
+
+      - name: ChangeLog
+        id: changelog
+        run: |
+          echo "latest<<EOF" >> $GITHUB_OUTPUT
+          awk '/^[0-9]/{i++}i==1' CHANGELOG | sed '${/^$/d}' >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            build/ios/iphoneos/app-ios.ipa
+          body: ${{ steps.changelog.outputs.latest }}
